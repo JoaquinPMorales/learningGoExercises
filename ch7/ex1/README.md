@@ -1,6 +1,2 @@
-The simple calculator program doesn’t handle one error case: division by zero.
-
-Change the function signature for the math operations to return both an int and an error. In the div function, if the divisor is 0, return errors.New("division by zero") for the error. In all other cases, return nil. Adjust the main function to check for this error.
-
-Calculator example: https://github.com/learning-go-book-2e/ch05/blob/main/sample_code/calculator/main.go
+You have been asked to manage a basketball league and are going to write a program to help you. Define two types. The first one, called Team, has a field for the name of the team and a field for the player names. The second type is called League and has a field called Teams for the teams in the league and a field called Wins that maps a team’s name to its number of wins.
 

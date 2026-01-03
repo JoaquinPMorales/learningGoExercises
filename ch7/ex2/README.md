@@ -1,3 +1,1 @@
-Write a function called fileLen that has an input parameter of type string and returns an int and an error. The function takes in a filename and returns the number of bytes in the file. If there is an error reading the file, return the error.
-
-Use defer to make sure the file is closed properly.
+Add two methods to League. The first method is called MatchResult. It takes four parameters: the name of the first team, its score in the game, the name of the second team, and its score in the game. This method should update the Wins field in League. Add a second method to League called ranking that returns a slice of the team names in order of wins. Build your data structures and call these methods from the main function in your program using some sample data.

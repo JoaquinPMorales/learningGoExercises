@@ -1,8 +1,2 @@
-Write a function called prefixer that has an input parameter of type string and returns a function that has an input parameter of type string and returns a string. The returned function should prefix its input with the string passed into
-prefixer. Use the following main function to test prefixer:
-
-func main() {
-    helloPrefix := prefixer("Hello")
-    fmt.Println(helloPrefix("Bob")) // should print Hello Bob
-    fmt.Println(helloPrefix("Maria")) // should print Hello Maria
-}
+Define an interface called Ranker that has a single method called Ranking that returns a slice of strings. Write a function called RankPrinter with two parameters, the first of type Ranker and the second of type io.Writer. Use the io.Write
+String function to write the values returned by Ranker to the io.Writer, with a newline separating each result. Call this function from main.

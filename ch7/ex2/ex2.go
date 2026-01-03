@@ -2,48 +2,102 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"log"
-	"os"
+	"slices"
 )
 
-// It is working but close the file without defer
-// func fileLen(fileName string) (int, error) {
-// 	dat, err := os.ReadFile(fileName)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-// 	return len(dat), nil
-// }
+type Team struct {
+	Name    string
+	Players []string
+}
 
-func fileLen(fileName string) (int, error) {
-	f, err := os.Open(fileName)
-	if err != nil {
-		return 0, err
+type League struct {
+	Teams map[string]Team
+	Wins  map[string]int
+}
+
+// Must be a func pointer
+func (l *League) MatchResult(firstTeamName string, scoreFirstTeam int, secondTeamName string, scoreSecondTeam int) {
+	// Security to check that both teams exists
+	if _, ok := l.Teams[firstTeamName]; !ok {
+		return
 	}
-	defer f.Close()
-	data := make([]byte, 2048)
-	total := 0
-	for {
-		count, err := f.Read(data)
-		total += count
-		if err != nil {
-			if err != io.EOF {
-				return 0, err
-			}
-			break
+	if _, ok := l.Teams[secondTeamName]; !ok {
+		return
+	}
+	if scoreFirstTeam == scoreSecondTeam {
+		return
+	}
+	if scoreFirstTeam > scoreSecondTeam {
+		l.Wins[firstTeamName] += 1
+		// or
+		// l.Wins[firstTeamName]++
+	} else {
+		l.Wins[secondTeamName] += 1
+	}
+}
+
+// This is not neccessary to have a func pointer, can be a value
+func (league League) Ranking() []string {
+	// It creates an slice from Wins keys
+	ranking := make([]string, 0, len(league.Wins))
+	for k := range league.Wins {
+		ranking = append(ranking, k)
+	}
+
+	// Sorts the keys using the wins for each team
+	slices.SortFunc(ranking, func(a, b string) int {
+		valA := league.Wins[a]
+		valB := league.Wins[b]
+
+		// Sort descendent
+		if valB != valA {
+			return valB - valA
 		}
-	}
-	return total, nil
+
+		// In case vals are equal, sort alphabetically
+		if a < b {
+			return -1
+		}
+		return 1
+	})
+
+	// Book solution
+	// Being names the keys slice
+	// sort is an imported library instead of slices
+	// sort.Slice(names, func(i, j int) bool {
+	// 	return l.Wins[names[i]] > l.Wins[names[j]]
+	// })
+
+	return ranking
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		return
+	firstTeam := Team{
+		Name:    "Real Madrid",
+		Players: []string{"Vinicius", "Rodrygo", "Mbappe"},
 	}
-	count, err := fileLen(os.Args[1])
-	if err != nil {
-		log.Fatal(err)
+
+	secondTeam := Team{
+		Name:    "Chelsea",
+		Players: []string{"Drogba", "Lampard", "Terry"},
 	}
-	fmt.Println(count)
+
+	// Important to start every map with an
+	// empty literal map instead of a nil map
+	// With the nil map, the lines adding the teams
+	// panics.
+	league := League{
+		Teams: map[string]Team{},
+		Wins:  map[string]int{},
+	}
+
+	league.Teams[firstTeam.Name] = firstTeam
+	league.Teams[secondTeam.Name] = secondTeam
+
+	league.Wins[firstTeam.Name] = 1
+	league.Wins[secondTeam.Name] = 0
+
+	league.MatchResult("Real Madrid", 1, "Chelsea", 0)
+	results := league.Ranking()
+	fmt.Println("Wins: ", results)
 }
